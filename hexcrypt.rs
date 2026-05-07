@@ -10,7 +10,6 @@ fn crypt() -> std::io::Result<()> {
 	let namefile: &str = FILENAME.get().expect("FILENAME ALREADY INITIALIZED").as_str();
 	println!("File: {}", namefile);
 	
-	KEY.set(0xAA);
 	let key: &u8 = KEY.get().expect("KEY ALREADY INITIALIZED");
 	
 	let mut file = File::open(namefile)?;
@@ -50,10 +49,14 @@ fn crypt() -> std::io::Result<()> {
 fn main() {
 	let args: Vec<String> = env::args().collect();
 	
-	if args.len() == 2 {
+	if args.len() == 3 {
 		FILENAME.set(args[1].clone());
+		
+		let first_word = args[2].as_bytes()[0];
+		KEY.set(first_word).ok();
+		
 		crypt();
 	} else {
-		println!("Invalid Arguments | hexcrypt file");
+		println!("Invalid Arguments | hexcrypt file key");
 	}
 }
